@@ -42,6 +42,16 @@ final class HabitStore {
         e.commit();
     }
 
+    /** Jadval boshlangan kun. Birinchi marta ochilganda bugungi kun bo'ladi. */
+    long startDay(long todayEpoch) {
+        long start = prefs.getLong("start", Long.MIN_VALUE);
+        if (start == Long.MIN_VALUE || start > todayEpoch) {
+            start = todayEpoch;
+            prefs.edit().putLong("start", start).commit();
+        }
+        return start;
+    }
+
     private String defaultName(int slot) {
         String[] defaults = ctx.getResources().getStringArray(R.array.default_habits);
         return slot < defaults.length ? defaults[slot] : "";

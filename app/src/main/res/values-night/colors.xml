@@ -8,4 +8,6 @@
     <color name="accent">#FF3CC77A</color>
     <color name="accent_soft">#FF22402F</color>
     <color name="on_accent">#FF0E1A13</color>
+    <color name="faint">#FF5F6772</color>
+    <color name="faint_line">#663A414A</color>
 </resources>

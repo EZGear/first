@@ -9,4 +9,6 @@
     <color name="accent_soft">#FFDDF2E5</color>
     <color name="on_accent">#FFFFFFFF</color>
     <color name="icon_bg">#FF1F9D57</color>
+    <color name="faint">#FFA3AAB4</color>
+    <color name="faint_line">#80C9CED6</color>
 </resources>

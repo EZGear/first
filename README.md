@@ -3,7 +3,7 @@
 Bosh ekranda turadigan vidjet:
 
 - chapda odatlar: Shakarsiz, Nonsiz, Suv ichdim, 10 000 qadam;
-- tepada oxirgi 7 kun va sanasi, bugungi kun eng o'ngda. Sanalar har kuni o'zi yangilanadi;
+- tepada kunlar va sanalar: boshlangan kundan chapdan boshlanib o'ngga to'lib boradi. Jadval to'lgach, har kuni bir ustunga suriladi. Vidjet qancha keng bo'lsa, shuncha ko'p kun sig'adi;
 - katakni bosganda ✓ qo'yiladi, yana bossangiz olib tashlanadi. Ilovani ochish shart emas.
 
 Odat nomlarini ilova ichida o'zgartirsa bo'ladi. 5-odat qo'shish mumkin, bo'sh qoldirilgan odat ko'rinmaydi.

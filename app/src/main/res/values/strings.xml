@@ -13,7 +13,7 @@
         <item></item>
     </string-array>
 
-    <string name="intro">Jadval bosh ekranda turadi. Kataklarni o\'sha yerning o\'zida bosib belgilaysiz, ilovani ochish shart emas. Sanalar har kuni o\'zi yangilanadi: bugun eng o\'ngda, oldingi 6 kun chapda.</string>
+    <string name="intro">Jadval bosh ekranda turadi. Kataklarni o\'sha yerning o\'zida bosib belgilaysiz, ilovani ochish shart emas. Kunlar boshlangan kundan chapdan boshlanib, o\'ngga to\'lib boradi. Vidjetni kengaytirsangiz, ko\'proq kun sig\'adi.</string>
     <string name="pin_widget">Bosh ekranga qo\'shish</string>
     <string name="pin_help">Tugma ishlamasa: bosh ekranning bo\'sh joyini bosib turing → Vidjetlar → Odatlarim.</string>
     <string name="habits_title">Odatlar</string>
