@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Odatlarim</string>
+    <string name="widget_title">Odatlarim</string>
+    <string name="widget_desc">Kunlik odatlar jadvali. Belgini shu yerning o\'zida qo\'yasiz.</string>
+    <string name="today_summary">Bugun: %1$d/%2$d</string>
+
+    <string-array name="default_habits">
+        <item>Shakarsiz</item>
+        <item>Nonsiz</item>
+        <item>Suv ichdim</item>
+        <item>10 000 qadam</item>
+        <item></item>
+    </string-array>
+
+    <string name="intro">Jadval bosh ekranda turadi. Kataklarni o\'sha yerning o\'zida bosib belgilaysiz, ilovani ochish shart emas. Sanalar har kuni o\'zi yangilanadi: bugun eng o\'ngda, oldingi 6 kun chapda.</string>
+    <string name="pin_widget">Bosh ekranga qo\'shish</string>
+    <string name="pin_help">Tugma ishlamasa: bosh ekranning bo\'sh joyini bosib turing → Vidjetlar → Odatlarim.</string>
+    <string name="habits_title">Odatlar</string>
+    <string name="habits_help">Nomini o\'zgartirib \"Saqlash\"ni bosing. Bo\'sh qoldirilgan qator jadvalda ko\'rinmaydi.</string>
+    <string name="hint1">1-odat</string>
+    <string name="hint2">2-odat</string>
+    <string name="hint3">3-odat</string>
+    <string name="hint4">4-odat</string>
+    <string name="hint5">5-odat (ixtiyoriy)</string>
+    <string name="save">Saqlash</string>
+    <string name="saved">Saqlandi</string>
+</resources>

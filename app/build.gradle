@@ -1,0 +1,43 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'uz.odat.vidjet'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'uz.odat.vidjet'
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName '1.0'
+    }
+
+    // Shaxsiy ilova uchun doimiy kalit: keyingi yangilanishlar eski ilova ustidan o'rnatiladi.
+    signingConfigs {
+        release {
+            storeFile file('odat.keystore')
+            storePassword 'odatvidjet'
+            keyAlias 'odat'
+            keyPassword 'odatvidjet'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+}
