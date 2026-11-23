@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 /** Odat nomlari va har kungi belgilarni telefonda saqlaydi. */
 final class HabitStore {
 
-    static final int SLOTS = 5;
+    static final int SLOTS = 6;
 
     private static final String PREFS = "odatlar";
 

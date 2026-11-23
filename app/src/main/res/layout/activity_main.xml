@@ -87,6 +87,11 @@
             style="@style/HabitField"
             android:hint="@string/hint5" />
 
+        <EditText
+            android:id="@+id/habit5"
+            style="@style/HabitField"
+            android:hint="@string/hint6" />
+
         <Button
             android:id="@+id/save"
             android:layout_width="match_parent"

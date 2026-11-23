@@ -11,6 +11,7 @@
         <item>Suv ichdim</item>
         <item>10 000 qadam</item>
         <item></item>
+        <item>Kaloriya me\'yorida</item>
     </string-array>
 
     <string name="intro">Jadval bosh ekranda turadi. Kataklarni o\'sha yerning o\'zida bosib belgilaysiz, ilovani ochish shart emas. Kunlar boshlangan kundan chapdan boshlanib, o\'ngga to\'lib boradi. Vidjetni kengaytirsangiz, ko\'proq kun sig\'adi.</string>
@@ -23,6 +24,7 @@
     <string name="hint3">3-odat</string>
     <string name="hint4">4-odat</string>
     <string name="hint5">5-odat (ixtiyoriy)</string>
+    <string name="hint6">6-odat (ixtiyoriy)</string>
     <string name="save">Saqlash</string>
     <string name="saved">Saqlandi</string>
 </resources>

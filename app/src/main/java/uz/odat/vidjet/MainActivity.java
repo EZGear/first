@@ -13,7 +13,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
     private static final int[] FIELD_IDS = {
-            R.id.habit0, R.id.habit1, R.id.habit2, R.id.habit3, R.id.habit4
+            R.id.habit0, R.id.habit1, R.id.habit2, R.id.habit3, R.id.habit4, R.id.habit5
     };
 
     @Override
