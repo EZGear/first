@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Threat Hunt · Live quiz 8.2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* VOICE: loud classroom game show. IDEA: a live quiz console for a cyber-safety lesson.
+   PICTURE: the game itself — big PIN, coloured answer tiles, podium.
+   COLOUR: deep navy ground, signal orange, four answer colours. TYPE: Montserrat heavy.
+   LAYOUT: host = projector screens; player = full-screen phone buttons. */
+:root{--navy:#0F1E33;--navy2:#18304F;--navy3:#22406A;--paper:#F5F6F1;--orange:#E8772E;--c0:#E5484D;--c1:#2F6FDB;--c2:#D99A00;--c3:#2E9A5A;--ok:#2E9A5A;--bad:#E5484D}
+*{box-sizing:border-box;margin:0;min-width:0}
+html,body{height:100%}
+body{font-family:Montserrat,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:var(--navy);color:#fff;overflow-x:hidden;-webkit-tap-highlight-color:transparent;
+  background-image:radial-gradient(circle at 12% 18%,rgba(232,119,46,.16) 0 140px,transparent 141px),radial-gradient(circle at 88% 80%,rgba(47,111,219,.18) 0 220px,transparent 221px),radial-gradient(circle at 75% 10%,rgba(255,255,255,.05) 0 90px,transparent 91px)}
+button{font:inherit;cursor:pointer;border:0;color:inherit}
+button:focus-visible,input:focus-visible{outline:4px solid #fff;outline-offset:3px}
+.screen{display:none;min-height:100vh;min-height:100dvh;flex-direction:column}
+.screen.on{display:flex}
+.center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;gap:18px}
+.logo{font-weight:900;font-size:clamp(34px,6vw,72px);letter-spacing:-.02em;line-height:1}
+.logo span{color:var(--orange)}
+.sub{font-weight:600;opacity:.85;font-size:clamp(15px,2vw,20px)}
+.card{background:#fff;color:var(--navy);border-radius:14px;padding:22px;width:min(380px,92vw);display:flex;flex-direction:column;gap:12px;box-shadow:0 6px 0 rgba(0,0,0,.25)}
+.card input{font:inherit;font-weight:800;font-size:22px;text-align:center;padding:14px;border:3px solid #D5DAE2;border-radius:10px;width:100%;color:var(--navy)}
+.btn{background:var(--navy);color:#fff;font-weight:800;font-size:20px;padding:14px 22px;border-radius:10px;box-shadow:0 4px 0 rgba(0,0,0,.35);min-height:52px}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
+.btn.or{background:var(--orange);color:var(--navy)}
+.btn.ghost{background:rgba(255,255,255,.12);color:#fff;box-shadow:none}
+.btn.sm{font-size:15px;padding:10px 14px;min-height:44px}
+.err{color:var(--c0);font-weight:700;font-size:15px;min-height:20px}
+.note{font-size:14px;font-weight:600;opacity:.8;max-width:560px;line-height:1.45}
+.choice{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;width:min(820px,94vw)}
+.choice button{background:#fff;color:var(--navy);border-radius:16px;padding:22px;text-align:left;display:flex;flex-direction:column;gap:6px;box-shadow:0 6px 0 rgba(0,0,0,.3);min-height:130px}
+.choice button b{font-size:22px;font-weight:900}
+.choice button span{font-size:14px;font-weight:600;color:#4A5568;line-height:1.4}
+.choice button.hot{background:var(--orange)}
+.choice button.hot span{color:#2A1A0E}
+details.help{width:min(820px,94vw);background:rgba(255,255,255,.08);border-radius:14px;padding:14px 18px;text-align:left}
+details.help summary{font-weight:800;cursor:pointer}
+details.help ol{margin:10px 0 0 18px;line-height:1.6;font-weight:600;font-size:15px}
+/* host lobby */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px;background:rgba(0,0,0,.25);flex-wrap:wrap}
+.bar .t{font-weight:800}
+.lobby{flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:28px;padding:28px}
+.joinbox{background:#fff;color:var(--navy);border-radius:20px;padding:24px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.joinbox .lbl{font-weight:800;font-size:18px;color:#4A5568}
+.pin{font-weight:900;font-size:clamp(54px,8vw,110px);letter-spacing:.04em;line-height:1}
+.qr{width:min(260px,60vw);aspect-ratio:1;background:#fff;display:flex;align-items:center;justify-content:center}
+.qr img,.qr svg{width:100%;height:100%;image-rendering:pixelated}
+.url{font-weight:700;font-size:14px;word-break:break-all;color:#1E5AA8}
+.warn{background:#FFF1E6;color:#8A3A0C;border-radius:10px;padding:10px 12px;font-size:13px;font-weight:700;text-align:left;line-height:1.4}
+.warn input{width:100%;margin-top:6px;font:inherit;font-size:14px;padding:8px;border:2px solid #E8B28F;border-radius:8px}
+.players{display:flex;flex-direction:column;gap:16px}
+.phead{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.count{font-weight:900;font-size:28px;background:rgba(0,0,0,.3);padding:8px 16px;border-radius:10px}
+.names{display:flex;flex-wrap:wrap;gap:12px;align-content:flex-start}
+.name{background:#fff;color:var(--navy);font-weight:800;font-size:22px;padding:10px 18px;border-radius:10px;animation:pop .35s ease both}
+.name:hover{text-decoration:line-through;cursor:pointer}
+.wait{font-weight:800;font-size:22px;opacity:.75;padding:30px 0}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+/* get ready */
+.big{font-weight:900;font-size:clamp(36px,6vw,80px);line-height:1.05}
+.topic{background:var(--orange);color:var(--navy);font-weight:800;padding:8px 18px;border-radius:30px;font-size:clamp(15px,1.8vw,22px)}
+.prog{width:min(560px,80vw);height:14px;background:rgba(255,255,255,.15);border-radius:10px;overflow:hidden}
+.prog i{display:block;height:100%;width:100%;background:var(--orange);transform-origin:left}
+.shrink{animation:shrink linear forwards}
+@keyframes shrink{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+/* host question */
+.qtext{background:#fff;color:var(--navy);font-weight:800;font-size:clamp(24px,3.4vw,48px);line-height:1.2;text-align:center;padding:22px 28px;margin:20px 20px 0;border-radius:14px;box-shadow:0 5px 0 rgba(0,0,0,.25)}
+.qmid{flex:1;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:20px;padding:20px 28px}
+.timer{width:clamp(90px,10vw,140px);aspect-ratio:1;border-radius:50%;background:var(--orange);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(36px,4.6vw,64px)}
+.timer.low{background:var(--c0);color:#fff;animation:pulse .5s ease infinite alternate}
+@keyframes pulse{to{transform:scale(1.07)}}
+.acount{text-align:center;font-weight:900;font-size:clamp(36px,4.6vw,64px);line-height:1}
+.acount span{display:block;font-size:18px;font-weight:700;opacity:.85}
+.chart{display:flex;align-items:flex-end;justify-content:center;gap:clamp(10px,2vw,28px);height:clamp(140px,26vh,280px)}
+.col{width:clamp(56px,8vw,110px);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px}
+.col b{font-weight:900;font-size:24px}
+.col i{display:block;width:100%;border-radius:8px 8px 0 0;min-height:8px;transition:height .7s cubic-bezier(.2,.8,.2,1)}
+.col.dim{opacity:.35}
+.mid-info{display:flex;flex-direction:column;align-items:center;gap:10px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 20px 20px}
+.tile{display:flex;align-items:center;gap:16px;padding:18px 20px;border-radius:10px;font-weight:800;font-size:clamp(18px,2.4vw,34px);text-align:left;min-height:clamp(70px,12vh,120px);box-shadow:0 5px 0 rgba(0,0,0,.25);color:#fff;transition:opacity .3s}
+.tile svg{flex:none;width:clamp(30px,3.4vw,52px);height:clamp(30px,3.4vw,52px)}
+.tile .tx{flex:1}
+.tile .mk{flex:none;font-size:clamp(26px,3vw,44px);font-weight:900}
+.tile.dim{opacity:.28}
+.t0{background:var(--c0)}.t1{background:var(--c1)}.t2{background:var(--c2)}.t3{background:var(--c3)}
+.host-ctrl{display:flex;gap:10px}
+/* scoreboard */
+.board{width:min(900px,94vw);display:flex;flex-direction:column;gap:12px;margin:0 auto}
+.row{text-align:left;display:grid;grid-template-columns:56px minmax(0,1fr) auto;align-items:center;gap:14px;background:#fff;color:var(--navy);border-radius:10px;padding:14px 20px;font-weight:800;font-size:clamp(18px,2.4vw,30px);animation:slide .45s ease both}
+.row .rk{font-weight:900;color:#8A3A0C}
+.row .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .sc{font-variant-numeric:tabular-nums}
+.row.me{outline:4px solid var(--orange)}
+@keyframes slide{from{transform:translateX(-30px);opacity:0}to{transform:none;opacity:1}}
+/* podium */
+.podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:end;gap:16px;width:min(900px,94vw);height:clamp(260px,46vh,440px)}
+.pod{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:10px}
+.pod .who{font-weight:900;font-size:clamp(18px,2.6vw,34px);text-align:center;overflow:hidden;text-overflow:ellipsis;max-width:100%;white-space:nowrap}
+.pod .blk{width:100%;border-radius:12px 12px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:14px;gap:6px;color:var(--navy);animation:rise .9s cubic-bezier(.2,.8,.2,1) both}
+.pod .medal{width:clamp(44px,5vw,70px);aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(22px,2.6vw,34px);background:#fff;color:var(--navy)}
+.pod .pts{font-weight:800;font-size:clamp(14px,1.8vw,22px)}
+.p1 .blk{background:var(--orange);height:100%;animation-delay:1.4s}.p2 .blk{background:#D5DAE2;height:72%;animation-delay:.7s}.p3 .blk{background:#C9A27E;height:52%;animation-delay:0s}
+.p1 .who{animation:fade .5s 2.1s both}.p2 .who{animation:fade .5s 1.4s both}.p3 .who{animation:fade .5s .7s both}
+@keyframes rise{from{transform:scaleY(0);transform-origin:bottom}to{transform:scaleY(1);transform-origin:bottom}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.results{width:min(900px,94vw);background:#fff;color:var(--navy);border-radius:14px;padding:16px 18px;margin:20px auto;overflow-x:auto}
+.results table{width:100%;border-collapse:collapse;font-weight:700;font-size:16px}
+.results th,.results td{text-align:left;padding:8px 10px;border-bottom:1px solid #E2E6EC}
+.results td.n{text-align:right;font-variant-numeric:tabular-nums}
+.results th{font-size:13px;color:#4A5568}
+canvas#confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
+/* player */
+.ptop{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(0,0,0,.3);font-weight:800;font-size:15px;gap:10px}
+.ptop .pn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ptop .ps{background:#fff;color:var(--navy);border-radius:8px;padding:4px 10px;font-variant-numeric:tabular-nums;flex:none}
+.pgrid{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:10px;padding:10px;padding-bottom:max(10px,env(safe-area-inset-bottom))}
+.pbtn{border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:12px;color:#fff;font-weight:800;font-size:clamp(15px,4.4vw,22px);line-height:1.2;box-shadow:0 5px 0 rgba(0,0,0,.3);text-align:center}
+.pbtn svg{width:clamp(40px,13vw,72px);height:clamp(40px,13vw,72px)}
+.pbtn:active{transform:translateY(3px)}
+.pbtn:disabled{opacity:.3}
+.pq{padding:10px 14px 0;font-weight:800;font-size:clamp(16px,4.4vw,22px);text-align:center;line-height:1.25}
+.ptimer{height:8px;background:rgba(255,255,255,.15);margin:8px 14px 0;border-radius:6px;overflow:hidden}
+.ptimer i{display:block;height:100%;background:var(--orange);transform-origin:left}
+.verdict{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:24px}
+.verdict.good{background:var(--ok)}.verdict.bad{background:var(--c0)}.verdict.none{background:var(--navy3)}
+.vmark{width:96px;height:96px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center}
+.vmark svg{width:56px;height:56px}
+.vt{font-weight:900;font-size:clamp(30px,9vw,48px)}
+.vpts{background:rgba(0,0,0,.25);font-weight:900;font-size:26px;padding:10px 22px;border-radius:10px}
+.vrank{font-weight:700;font-size:18px;max-width:340px;line-height:1.4}
+.spinner{width:64px;height:64px;border-radius:50%;border:8px solid rgba(255,255,255,.2);border-top-color:var(--orange);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.conn{position:fixed;left:50%;top:10px;transform:translateX(-50%);background:var(--c0);color:#fff;font-weight:800;font-size:14px;padding:8px 14px;border-radius:8px;z-index:60;display:none}
+.conn.on{display:block}
+@media (max-width:820px){.lobby{grid-template-columns:1fr}.qmid{grid-template-columns:auto minmax(0,1fr) auto;padding:12px}.tiles{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="conn" id="conn">Reconnecting…</div>
+
+<!-- START -->
+<section class="screen" id="s-start">
+  <div class="center">
+    <div class="logo">Threat<span>Hunt</span></div>
+    <p class="sub">Live quiz · 8.2 Recognizing online threats · 20 questions · A2–B1</p>
+    <div class="choice">
+      <button id="go-join" class="hot"><b>Join a game</b><span>Student: enter the game PIN on your phone.</span></button>
+      <button id="go-host"><b>Host with phones</b><span>Teacher: show the PIN and QR code on the projector. Students join on their phones.</span></button>
+      <button id="go-offline"><b>Play on one screen</b><span>No phones, no internet needed. The class answers together; you click the answer.</span></button>
+    </div>
+    <details class="help">
+      <summary>Teacher: how to make the phone game work</summary>
+      <ol>
+        <li>Phones need a web link to this page. Upload this file (index.html) to a free host, for example Netlify Drop, GitHub Pages or tiiny.host.</li>
+        <li>Open that link on the classroom computer and choose <b>Host with phones</b>.</li>
+        <li>Students scan the QR code (or open the link and type the PIN), then type their name.</li>
+        <li>Everyone needs internet. Answers travel through a free public server; only nicknames and answers are sent.</li>
+      </ol>
+    </details>
+  </div>
+</section>
+
+<!-- PLAYER: PIN -->
+<section class="screen" id="s-pin">
+  <div class="center">
+    <div class="logo">Threat<span>Hunt</span></div>
+    <form class="card" id="f-pin" autocomplete="off">
+      <input id="in-pin" inputmode="numeric" maxlength="7" placeholder="Game PIN" aria-label="Game PIN">
+      <button class="btn" type="submit">Enter</button>
+      <p class="err" id="pin-err" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<!-- PLAYER: NAME -->
+<section class="screen" id="s-name">
+  <div class="center">
+    <div class="logo">Threat<span>Hunt</span></div>
+    <form class="card" id="f-name" autocomplete="off">
+      <input id="in-name" maxlength="15" placeholder="Nickname" aria-label="Nickname">
+      <button class="btn" type="submit">OK, go!</button>
+      <p class="err" id="name-err" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<!-- PLAYER: generic -->
+<section class="screen" id="s-pmsg">
+  <div class="ptop"><span class="pn" id="pm-name"></span><span class="ps" id="pm-score">0</span></div>
+  <div class="center" id="pm-body"></div>
+</section>
+
+<!-- PLAYER: answer -->
+<section class="screen" id="s-pans">
+  <div class="ptop"><span id="pa-num">Question 1 of 20</span><span class="ps" id="pa-score">0</span></div>
+  <p class="pq" id="pa-q"></p>
+  <div class="ptimer"><i id="pa-timer"></i></div>
+  <div class="pgrid" id="pa-grid"></div>
+</section>
+
+<!-- PLAYER: verdict -->
+<section class="screen" id="s-pres">
+  <div class="ptop"><span class="pn" id="pr-name"></span><span class="ps" id="pr-score">0</span></div>
+  <div class="verdict" id="pr-box"></div>
+</section>
+
+<!-- HOST: lobby -->
+<section class="screen" id="s-lobby">
+  <div class="bar"><span class="t">Threat<span style="color:var(--orange)">Hunt</span> · 8.2 Recognizing online threats</span><span class="t">Game PIN: <span id="bar-pin"></span></span></div>
+  <div class="lobby">
+    <div class="joinbox">
+      <p class="lbl">Scan to join</p>
+      <div class="qr" id="qr"></div>
+      <p class="url" id="join-url"></p>
+      <p class="lbl">or enter the Game PIN</p>
+      <p class="pin" id="pin-big">——</p>
+      <div class="warn" id="file-warn" hidden>This page is open from a file on this computer, so phones can’t reach it. Upload the file first, then paste its web link here:
+        <input id="pub-url" placeholder="https://your-site.netlify.app/" aria-label="Public link to this game"></div>
+    </div>
+    <div class="players">
+      <div class="phead"><span class="count"><span id="pcount">0</span> players</span>
+        <div class="host-ctrl"><button class="btn sm ghost" id="btn-mute" aria-pressed="false">Sound: on</button><button class="btn or" id="btn-start" disabled>Start</button></div></div>
+      <div class="names" id="names"><p class="wait" id="wait">Waiting for players…</p></div>
+      <p class="note">Click a name to remove a player.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOST: connecting -->
+<section class="screen" id="s-hconn">
+  <div class="center"><div class="spinner"></div><p class="big" style="font-size:28px" id="hconn-t">Connecting to the game server…</p><p class="note" id="hconn-n"></p>
+  <div class="host-ctrl" id="hconn-btns" hidden><button class="btn or" id="hconn-retry">Try again</button><button class="btn ghost" id="hconn-off">Play on one screen</button></div></div>
+</section>
+
+<!-- HOST: get ready -->
+<section class="screen" id="s-ready">
+  <div class="center"><p class="topic" id="rd-topic"></p><p class="big" id="rd-num"></p><div class="prog"><i id="rd-bar"></i></div></div>
+</section>
+
+<!-- HOST: question / reveal -->
+<section class="screen" id="s-hq">
+  <div class="bar"><span class="t" id="hq-num"></span><span class="t">PIN <span id="hq-pin"></span></span>
+    <div class="host-ctrl"><button class="btn sm ghost" id="btn-skip">Skip</button><button class="btn sm or" id="btn-next" hidden>Next</button></div></div>
+  <p class="qtext" id="hq-text"></p>
+  <div class="qmid">
+    <div class="timer" id="hq-timer">20</div>
+    <div class="mid-info" id="hq-mid"></div>
+    <div class="acount" id="hq-ac">0<span>answers</span></div>
+  </div>
+  <div class="tiles" id="hq-tiles"></div>
+</section>
+
+<!-- HOST: scoreboard -->
+<section class="screen" id="s-board">
+  <div class="bar"><span class="t">Scoreboard</span><div class="host-ctrl"><button class="btn sm or" id="btn-next2">Next</button></div></div>
+  <div class="center" style="justify-content:flex-start;padding-top:40px"><p class="big" style="font-size:clamp(30px,4vw,56px)">Scoreboard</p><div class="board" id="board"></div></div>
+</section>
+
+<!-- HOST: final -->
+<section class="screen" id="s-final">
+  <div class="bar"><span class="t">Final results</span><div class="host-ctrl"><button class="btn sm ghost" id="btn-csv">Download CSV</button><button class="btn sm ghost" id="btn-copy">Copy results</button><button class="btn sm or" id="btn-again">Play again</button></div></div>
+  <div class="center" style="justify-content:flex-start;padding-top:30px">
+    <p class="big" style="font-size:clamp(30px,4vw,56px)" id="fin-title">Winners</p>
+    <div class="podium" id="podium"></div>
+    <div class="results" id="results"></div>
+  </div>
+</section>
+
+<canvas id="confetti" hidden></canvas>
+
+<script>
+{
+/* ---------- data ---------- */
+const QS = [
+{"q":"A person who gets into your account without permission is a…","a":["virus","hacker","scam","fake link"],"c":2,"t":20,"topic":"Vocabulary"},
+{"q":"“Don’t ___ the fake link!”","a":["clicks","to click","click","clicking"],"c":3,"t":20,"topic":"Imperatives"},
+{"q":"You ___ share your password with anyone. It’s dangerous!","a":["mustn’t","must","have to","don’t have to"],"c":1,"t":20,"topic":"mustn’t"},
+{"q":"A fake message that asks for your password is a…","a":["malware","threat","hacker","phishing message"],"c":4,"t":20,"topic":"Vocabulary"},
+{"q":"You ___ use a strong password. It’s very important.","a":["mustn’t","must","don’t have to","doesn’t have to"],"c":2,"t":20,"topic":"must"},
+{"q":"The app is free. You ___ pay for it.","a":["must","has to","mustn’t","don’t have to"],"c":4,"t":20,"topic":"don’t have to"},
+{"q":"Which word means “making you feel that something is wrong”?","a":["suspicious","safe","strong","free"],"c":1,"t":20,"topic":"Vocabulary"},
+{"q":"She ___ change her password every month. It’s a company rule.","a":["have to","must to","has to","mustn’t"],"c":3,"t":20,"topic":"have to"},
+{"q":"Which sentence is correct?","a":["You must to update your apps.","You must update your apps.","You musts update your apps.","You must updating your apps."],"c":2,"t":30,"topic":"must"},
+{"q":"Software designed to damage a computer or steal data is…","a":["hardware","a browser","an email","malware"],"c":4,"t":20,"topic":"Vocabulary"},
+{"q":"“___ open files from strangers!”","a":["Never","Not","No","Doesn’t"],"c":1,"t":20,"topic":"Imperatives"},
+{"q":"Yesterday I ___ delete a virus from my laptop.","a":["must","had to","musted","have to"],"c":2,"t":20,"topic":"had to"},
+{"q":"“You mustn’t open this file” means…","a":["It’s not necessary.","You can open it.","It’s not allowed.","It’s a good idea."],"c":3,"t":20,"topic":"mustn’t"},
+{"q":"A dishonest plan to trick people and take their money is a…","a":["scam","virus","password","hacker"],"c":1,"t":20,"topic":"Vocabulary"},
+{"q":"An internet address that leads to a dangerous or false website is a…","a":["password","browser","fake link","app"],"c":3,"t":20,"topic":"Vocabulary"},
+{"q":"Your friend gets a strange email with a link. What’s the best advice?","a":["Click it quickly.","Send it to everyone.","Reply with your password.","Don’t click it. Report it."],"c":4,"t":20,"topic":"Imperatives"},
+{"q":"Find the mistake: “He don’t have to install this app.”","a":["He → His","don’t → doesn’t","have → has","install → installs"],"c":2,"t":30,"topic":"don’t have to"},
+{"q":"A program that copies itself and damages files is a…","a":["scam","hacker","virus","fake link"],"c":3,"t":20,"topic":"Vocabulary"},
+{"q":"Unknown USB drives are a common security ___.","a":["threat","hacker","password","update"],"c":1,"t":20,"topic":"Vocabulary"},
+{"q":"Choose the correct rule for the school computer lab:","a":["Students must share their passwords.","Students has to click every link.","Students mustn’t to use the computers.","Students mustn’t download unknown programs."],"c":4,"t":30,"topic":"Rules"}
+];
+const TOTAL = QS.length;
+const SHAPES = [
+ '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4 L37 34 H3 Z" fill="#fff"/></svg>',
+ '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 2 L38 20 L20 38 L2 20 Z" fill="#fff"/></svg>',
+ '<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="#fff"/></svg>',
+ '<svg viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="4" width="32" height="32" rx="3" fill="#fff"/></svg>'];
+const COLORS = ['var(--c0)','var(--c1)','var(--c2)','var(--c3)'];
+const ICON_OK = '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M8 21 L17 30 L33 11" fill="none" stroke="#2E9A5A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ICON_BAD = '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M11 11 L29 29 M29 11 L11 29" fill="none" stroke="#E5484D" stroke-width="6" stroke-linecap="round"/></svg>';
+const BROKERS = ['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt','wss://test.mosquitto.org:8081/mqtt'];
+const MQTT_JS = ['https://unpkg.com/mqtt@4.3.7/dist/mqtt.min.js','https://cdn.jsdelivr.net/npm/mqtt@4.3.7/dist/mqtt.min.js'];
+const QR_JS = ['https://unpkg.com/qrcode-generator@1.4.4/qrcode.js','https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js'];
+const params = new URLSearchParams(location.search);
+const LOCAL = params.has('local');
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => Number(n||0).toLocaleString('en-US');
+const ord = n => n + (['th','st','nd','rd'][(n%100>10&&n%100<14)?0:(n%10<4?n%10:0)] || 'th');
+const rid = (n=8) => Array.from(crypto.getRandomValues(new Uint8Array(n)), b => 'abcdefghjkmnpqrstuvwxyz23456789'[b%31]).join('');
+const store = { get(k){ try{ return JSON.parse(sessionStorage.getItem(k)); }catch(e){ return null; } }, set(k,v){ try{ sessionStorage.setItem(k, JSON.stringify(v)); }catch(e){} } };
+function show(id){ document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); }
+function loadScript(urls){ return new Promise((res, rej) => { let i = 0; const next = () => { if (i >= urls.length) return rej(new Error('load')); const s = document.createElement('script'); s.src = urls[i++]; s.onload = () => res(); s.onerror = () => { s.remove(); next(); }; document.head.appendChild(s); }; next(); }); }
+let AC = null, muted = false;
+function beep(f, d, type, vol){ if (muted) return; try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); const o = AC.createOscillator(), g = AC.createGain(), t = AC.currentTime; o.type = type || 'sine'; o.frequency.value = f; g.gain.setValueAtTime(vol || .08, t); g.gain.exponentialRampToValueAtTime(.0001, t + d); o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + d); } catch(e){} }
+const sfx = { tick(){ beep(880,.08,'square',.04); }, ok(){ beep(660,.15); setTimeout(()=>beep(990,.25),130); }, end(){ [523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,.3,'triangle',.09),i*160)); }, join(){ beep(1200,.06,'sine',.05); } };
+
+/* ---------- transport ---------- */
+function setConn(ok){ $('conn').classList.toggle('on', !ok); }
+function localTransport(){
+  const ch = new BroadcastChannel('threathunt'); const subs = {};
+  ch.onmessage = e => { const { topic, msg } = e.data || {}; (subs[topic] || []).forEach(fn => fn(msg)); };
+  return Promise.resolve({ pub(t, o){ ch.postMessage({ topic: t, msg: o }); }, sub(t, fn){ (subs[t] = subs[t] || []).push(fn); }, close(){ ch.close(); } });
+}
+async function mqttTransport(idx){
+  await loadScript(MQTT_JS);
+  return new Promise((res, rej) => {
+    const c = window.mqtt.connect(BROKERS[idx], { clientId: 'th' + rid(10), clean: true, connectTimeout: 7000, reconnectPeriod: 2000, keepalive: 30 });
+    const subs = {}; let done = false;
+    const to = setTimeout(() => { if (!done) { done = true; try { c.end(true); } catch(e){} rej(new Error('timeout')); } }, 9000);
+    c.on('connect', () => { setConn(true); if (!done) { done = true; clearTimeout(to); res(api); } });
+    c.on('offline', () => setConn(false));
+    c.on('close', () => { if (done) setConn(false); });
+    c.on('error', () => {});
+    c.on('message', (t, buf) => { let m; try { m = JSON.parse(buf.toString()); } catch(e){ return; } (subs[t] || []).forEach(fn => fn(m)); });
+    const api = {
+      pub(t, o, retain){ c.publish(t, JSON.stringify(o), { qos: 1, retain: !!retain }); },
+      sub(t, fn){ (subs[t] = subs[t] || []).push(fn); c.subscribe(t, { qos: 1 }); },
+      close(){ try { c.end(true); } catch(e){} }
+    };
+  });
+}
+function connectTo(idx){ return LOCAL ? localTransport() : mqttTransport(idx); }
+
+/* =====================================================================
+   HOST
+   ===================================================================== */
+const H = { tr: null, pin: '', base: '', players: new Map(), kicked: new Set(), ph: 'idle', q: -1, answers: new Map(), timerId: 0, deadline: 0, offline: false, picked: -1, classOk: 0, hb: 0, readyTo: 0, ticked: 0 };
+
+async function hostStart(){
+  show('s-hconn'); $('hconn-btns').hidden = true; $('hconn-t').textContent = 'Connecting to the game server…'; $('hconn-n').textContent = '';
+  for (let i = 0; i < BROKERS.length; i++) {
+    try {
+      $('hconn-n').textContent = LOCAL ? 'Local test mode' : 'Server ' + (i + 1) + ' of ' + BROKERS.length;
+      const tr = await connectTo(i);
+      H.tr = tr; H.pin = String(i + 1) + String(Math.floor(Math.random() * 1e5)).padStart(5, '0');
+      H.base = 'threathunt82/' + H.pin;
+      tr.sub(H.base + '/in', hostOnMsg);
+      H.ph = 'lobby'; hostLobby(); publish();
+      clearInterval(H.hb); H.hb = setInterval(publish, 2000);
+      return;
+    } catch(e) { /* try next */ }
+  }
+  $('hconn-t').textContent = 'Could not reach a game server.';
+  $('hconn-n').textContent = 'Check the internet connection (some school networks block it — try a phone hotspot). Or play on one screen without phones.';
+  $('hconn-btns').hidden = false;
+}
+
+function joinUrl(){
+  const pub = ($('pub-url').value || '').trim();
+  let u = pub && /^https?:\/\//i.test(pub) ? pub.split(/[?#]/)[0] : location.origin + location.pathname;
+  return u + '?pin=' + H.pin;
+}
+async function drawQR(){
+  const box = $('qr'); const url = joinUrl(); $('join-url').textContent = url;
+  try {
+    await loadScript(QR_JS);
+    const qr = window.qrcode(0, 'M'); qr.addData(url); qr.make();
+    const img = new Image(); img.alt = 'QR code to join the game'; img.src = qr.createDataURL(8, 2); box.innerHTML = ''; box.appendChild(img);
+  } catch(e) { box.innerHTML = '<p class="note" style="color:#0F1E33">QR code needs internet. Use the PIN.</p>'; }
+}
+function hostLobby(){
+  show('s-lobby');
+  const p = H.pin.slice(0,3) + ' ' + H.pin.slice(3);
+  $('pin-big').textContent = p; $('bar-pin').textContent = p; $('hq-pin').textContent = p;
+  $('file-warn').hidden = location.protocol !== 'file:';
+  drawQR(); renderNames();
+}
+function renderNames(){
+  const box = $('names'); const list = [...H.players.values()];
+  $('pcount').textContent = list.length; $('btn-start').disabled = list.length === 0;
+  box.innerHTML = list.length ? '' : '<p class="wait">Waiting for players…</p>';
+  list.forEach(pl => { const b = document.createElement('button'); b.className = 'name'; b.textContent = pl.name; b.title = 'Remove ' + pl.name; b.onclick = () => { H.players.delete(pl.id); H.kicked.add(pl.id); renderNames(); publish(); }; box.appendChild(b); });
+}
+function cleanName(s){ return String(s || '').replace(/[\u0000-\u001f\u007f-\u009f​-‏‪-‮⁠-⁯]/g, '').trim().slice(0, 15); }
+function hostOnMsg(m){
+  if (!m || typeof m !== 'object' || typeof m.id !== 'string' || m.id.length > 20) return;
+  if (m.t === 'join') {
+    if (H.kicked.has(m.id)) return;
+    if (H.players.has(m.id)) { publish(); return; }
+    let name = cleanName(m.name) || 'Player'; const base = name; let k = 2;
+    const taken = new Set([...H.players.values()].map(p => p.name.toLowerCase()));
+    while (taken.has(name.toLowerCase())) name = (base.slice(0, 12) + ' ' + k++);
+    H.players.set(m.id, { id: m.id, name, score: 0, streak: 0, correct: 0, gain: 0, ok: -1 });
+    sfx.join(); if (H.ph === 'lobby') renderNames(); publish();
+  } else if (m.t === 'ans') {
+    if (H.ph !== 'q' || m.q !== H.q || !H.players.has(m.id) || H.answers.has(m.id)) return;
+    const a = Number(m.a); if (!(a >= 1 && a <= 4)) return;
+    const lim = QS[H.q].t * 1000; const ms = Math.max(0, Math.min(lim, Number(m.ms) || lim));
+    H.answers.set(m.id, { a, ms });
+    $('hq-ac').innerHTML = H.answers.size + '<span>answers</span>';
+    if (H.answers.size >= H.players.size) endQuestion();
+  }
+}
+function ranking(){ return [...H.players.values()].sort((a, b) => b.score - a.score || a.name.localeCompare(b.name)); }
+function resMap(){ const r = {}; ranking().forEach((p, i) => { r[p.id] = [p.gain, p.score, i + 1, p.ok, p.streak, p.correct]; }); return r; }
+function publish(){
+  if (!H.tr || H.offline) return;
+  const s = { ph: H.ph, q: H.q, n: TOTAL, ro: [...H.players.keys()], kk: [...H.kicked] };
+  if (H.ph === 'q') { const Q = QS[H.q]; s.a = Q.a; s.qt = Q.q; s.t = Q.t; s.left = Math.max(0, H.deadline - Date.now()); }
+  if (H.ph === 'rev' || H.ph === 'board' || H.ph === 'end') { s.res = resMap(); s.c = QS[H.q] ? QS[H.q].c : 0; }
+  if (H.ph === 'board' || H.ph === 'end') { s.top = ranking().slice(0, 5).map(p => [p.name, p.score]); }
+  H.tr.pub(H.base + '/state', s, true);
+}
+function startGame(){ H.q = -1; H.players.forEach(p => { p.score = 0; p.streak = 0; p.correct = 0; p.gain = 0; p.ok = -1; }); H.classOk = 0; nextQuestion(); }
+function nextQuestion(){
+  H.q++;
+  if (H.q >= TOTAL) return showFinal();
+  H.ph = 'ready'; publish();
+  const Q = QS[H.q];
+  $('rd-topic').textContent = Q.topic; $('rd-num').textContent = 'Question ' + (H.q + 1) + ' of ' + TOTAL;
+  const bar = $('rd-bar'); bar.classList.remove('shrink'); void bar.offsetWidth; bar.style.animationDuration = '3s'; bar.classList.add('shrink');
+  show('s-ready');
+  clearTimeout(H.readyTo); H.readyTo = setTimeout(showQuestion, 3000);
+}
+function tilesHTML(Q, clickable){
+  return Q.a.map((t, i) => '<' + (clickable ? 'button' : 'div') + ' class="tile t' + i + '" data-i="' + (i + 1) + '">' + SHAPES[i] + '<span class="tx">' + esc(t) + '</span><span class="mk"></span></' + (clickable ? 'button' : 'div') + '>').join('');
+}
+function showQuestion(){
+  const Q = QS[H.q]; H.answers = new Map(); H.picked = -1; H.ticked = 0;
+  $('hq-num').textContent = 'Question ' + (H.q + 1) + ' of ' + TOTAL;
+  $('hq-pin').parentElement.hidden = H.offline;
+  $('hq-text').textContent = Q.q;
+  $('hq-mid').innerHTML = '<p class="topic">' + esc(Q.topic) + '</p>';
+  $('hq-ac').innerHTML = (H.offline ? '' : '0<span>answers</span>');
+  $('hq-tiles').innerHTML = tilesHTML(Q, H.offline);
+  $('btn-skip').hidden = false; $('btn-skip').textContent = H.offline ? 'Show answer' : 'Skip'; $('btn-next').hidden = true;
+  if (H.offline) $('hq-tiles').querySelectorAll('button').forEach(b => b.onclick = () => { H.picked = Number(b.dataset.i); endQuestion(); });
+  show('s-hq');
+  H.deadline = Date.now() + Q.t * 1000; H.ph = 'q'; publish();
+  const tm = $('hq-timer'); tm.classList.remove('low');
+  clearInterval(H.timerId);
+  const tick = () => {
+    const left = Math.max(0, Math.ceil((H.deadline - Date.now()) / 1000));
+    tm.textContent = left; tm.classList.toggle('low', left <= 5);
+    if (left <= 5 && left > 0 && H.ticked !== left) { H.ticked = left; sfx.tick(); }
+    if (left <= 0) endQuestion();
+  };
+  tick(); H.timerId = setInterval(tick, 200);
+}
+function endQuestion(){
+  if (H.ph !== 'q') return;
+  clearInterval(H.timerId);
+  const Q = QS[H.q]; const lim = Q.t * 1000; const counts = [0,0,0,0];
+  H.answers.forEach(v => counts[v.a - 1]++);
+  H.players.forEach(p => {
+    const ans = H.answers.get(p.id);
+    if (ans && ans.a === Q.c) {
+      p.streak++; p.correct++;
+      const base = Math.round(1000 * (1 - (ans.ms / lim) / 2));
+      const bonus = p.streak >= 2 ? Math.min((p.streak - 1) * 100, 500) : 0;
+      p.gain = base + bonus; p.score += p.gain; p.ok = 1;
+    } else { p.streak = 0; p.gain = 0; p.ok = ans ? 0 : -1; }
+  });
+  if (H.offline && H.picked === Q.c) H.classOk++;
+  H.ph = 'rev'; publish(); sfx.ok();
+  $('hq-timer').classList.remove('low');
+  $('hq-tiles').querySelectorAll('.tile').forEach(t => { const i = Number(t.dataset.i); const good = i === Q.c; t.classList.toggle('dim', !good); t.querySelector('.mk').innerHTML = good ? '&#10003;' : (H.offline && i === H.picked ? '&#10007;' : ''); if (t.tagName === 'BUTTON') t.disabled = true; });
+  if (!H.offline) {
+    const max = Math.max(1, ...counts);
+    $('hq-mid').innerHTML = '<div class="chart">' + counts.map((c, i) => '<div class="col' + (i + 1 === Q.c ? '' : ' dim') + '"><b>' + c + '</b><i style="background:' + COLORS[i] + ';height:0%" data-h="' + Math.round(c / max * 100) + '"></i></div>').join('') + '</div>';
+    requestAnimationFrame(() => requestAnimationFrame(() => $('hq-mid').querySelectorAll('i[data-h]').forEach(i => i.style.height = Math.max(4, Number(i.dataset.h)) + '%')));
+  } else {
+    $('hq-mid').innerHTML = '<p class="big" style="font-size:clamp(26px,3.4vw,46px)">' + (H.picked === Q.c ? 'Correct!' : H.picked > 0 ? 'Not this time' : 'The answer is…') + '</p>';
+  }
+  $('btn-skip').hidden = true; $('btn-next').hidden = false; $('btn-next').focus();
+}
+function showBoard(){
+  if (H.q >= TOTAL - 1) return showFinal();
+  if (H.offline) return nextQuestion();
+  H.ph = 'board'; publish();
+  const r = ranking().slice(0, 5);
+  $('board').innerHTML = r.map((p, i) => '<div class="row" style="animation-delay:' + (i * 90) + 'ms"><span class="rk">' + (i + 1) + '</span><span class="nm">' + esc(p.name) + '</span><span class="sc">' + fmt(p.score) + '</span></div>').join('') || '<p class="wait">No players</p>';
+  show('s-board'); $('btn-next2').focus();
+}
+function showFinal(){
+  clearInterval(H.timerId); H.ph = 'end'; publish(); sfx.end();
+  const r = ranking();
+  if (H.offline) {
+    $('fin-title').textContent = 'Well done, class!';
+    $('podium').innerHTML = '<div></div><div class="pod p1"><p class="who">' + H.classOk + ' / ' + TOTAL + '</p><div class="blk"><span class="medal">&#9733;</span><span class="pts">correct answers</span></div></div><div></div>';
+    $('results').hidden = true; $('btn-csv').hidden = true; $('btn-copy').hidden = true;
+  } else {
+    $('fin-title').textContent = 'Winners';
+    const slot = (p, cls, n) => '<div class="pod ' + cls + '"><p class="who">' + (p ? esc(p.name) : '—') + '</p><div class="blk"><span class="medal">' + n + '</span><span class="pts">' + (p ? fmt(p.score) + ' pts' : '') + '</span><span class="pts">' + (p ? p.correct + '/' + TOTAL + ' correct' : '') + '</span></div></div>';
+    $('podium').innerHTML = slot(r[1], 'p2', 2) + slot(r[0], 'p1', 1) + slot(r[2], 'p3', 3);
+    $('results').hidden = false; $('btn-csv').hidden = false; $('btn-copy').hidden = false;
+    $('results').innerHTML = '<table><thead><tr><th>Rank</th><th>Name</th><th style="text-align:right">Score</th><th style="text-align:right">Correct</th></tr></thead><tbody>' +
+      r.map((p, i) => '<tr><td>' + (i + 1) + '</td><td>' + esc(p.name) + '</td><td class="n">' + fmt(p.score) + '</td><td class="n">' + p.correct + '/' + TOTAL + '</td></tr>').join('') + '</tbody></table>';
+  }
+  show('s-final'); setTimeout(confetti, 2100);
+}
+function resultsText(sep){ return ['Rank','Name','Score','Correct'].join(sep) + '\n' + ranking().map((p, i) => [i + 1, sep === ',' ? '"' + p.name.replace(/"/g, '""') + '"' : p.name, p.score, p.correct + '/' + TOTAL].join(sep)).join('\n'); }
+function confetti(){
+  const cv = $('confetti'); cv.hidden = false; const ctx = cv.getContext('2d');
+  const W = cv.width = innerWidth, Hh = cv.height = innerHeight;
+  const cols = ['#E8772E','#E5484D','#2F6FDB','#D99A00','#2E9A5A','#ffffff'];
+  const ps = Array.from({ length: 160 }, () => ({ x: Math.random() * W, y: -20 - Math.random() * Hh * .5, vx: (Math.random() - .5) * 3, vy: 2 + Math.random() * 4, r: 5 + Math.random() * 6, a: Math.random() * 6, c: cols[Math.floor(Math.random() * cols.length)] }));
+  let f = 0;
+  (function loop(){ ctx.clearRect(0, 0, W, Hh); ps.forEach(p => { p.x += p.vx; p.y += p.vy; p.a += .1; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.fillStyle = p.c; ctx.fillRect(-p.r / 2, -p.r / 4, p.r, p.r / 2); ctx.restore(); }); if (++f < 260) requestAnimationFrame(loop); else { cv.hidden = true; } })();
+}
+
+/* =====================================================================
+   PLAYER
+   ===================================================================== */
+const P = { tr: null, pin: '', base: '', id: '', name: '', joined: false, st: null, key: '', answeredQ: -1, deadline: 0, tId: 0, joinT: 0, gotState: false, lastRes: null };
+function pinBroker(pin){ const d = Number(pin[0]); return d >= 1 && d <= BROKERS.length ? d - 1 : -1; }
+async function playerConnect(pin){
+  pin = String(pin || '').replace(/\D/g, '');
+  const err = $('pin-err'); err.textContent = '';
+  if (pin.length !== 6 || pinBroker(pin) < 0) { err.textContent = 'Please check the PIN (6 digits).'; show('s-pin'); return; }
+  show('s-pmsg'); $('pm-name').textContent = ''; $('pm-score').textContent = ''; pmsg('<div class="spinner"></div><p class="vt" style="font-size:24px">Looking for the game…</p>');
+  try { P.tr = await connectTo(pinBroker(pin)); } catch(e) { show('s-pin'); $('in-pin').value = pin; err.textContent = 'No connection. Check your internet and try again.'; return; }
+  P.pin = pin; P.base = 'threathunt82/' + pin; P.key = 'th-' + pin;
+  const saved = store.get(P.key) || {};
+  P.id = saved.id || rid(10); P.name = saved.name || '';
+  store.set(P.key, { id: P.id, name: P.name });
+  P.tr.sub(P.base + '/state', onState);
+  setTimeout(() => { if (!P.gotState) { show('s-pin'); $('in-pin').value = pin; err.textContent = 'Game not found. Check the PIN.'; } }, LOCAL ? 3500 : 7000);
+}
+function pmsg(html){ $('pm-body').innerHTML = html; }
+function sendJoin(){ if (P.tr && P.name) P.tr.pub(P.base + '/in', { t: 'join', id: P.id, name: P.name }); }
+function onState(s){
+  if (!s || typeof s !== 'object') return;
+  const first = !P.gotState; P.gotState = true; P.st = s;
+  if (Array.isArray(s.kk) && s.kk.includes(P.id)) { clearInterval(P.joinT); showP('s-pmsg'); pmsg('<p class="vt">Removed</p><p class="vrank">The host removed you from this game.</p>'); return; }
+  const inRoster = Array.isArray(s.ro) && s.ro.includes(P.id);
+  if (!P.name) { if (first) { show('s-name'); $('in-name').focus(); } return; }
+  if (!inRoster) { if (!P.joinT) { sendJoin(); P.joinT = setInterval(sendJoin, 2500); } showP('s-pmsg'); pmsg('<div class="spinner"></div><p class="vt" style="font-size:24px">Joining…</p>'); return; }
+  if (P.joinT) { clearInterval(P.joinT); P.joinT = 0; }
+  const key = s.ph + ':' + s.q;
+  if (s.res && s.res[P.id]) P.lastRes = s.res[P.id];
+  const score = P.lastRes ? P.lastRes[1] : 0;
+  ['pm-score','pa-score','pr-score'].forEach(id => $(id).textContent = fmt(score));
+  ['pm-name','pr-name'].forEach(id => $(id).textContent = P.name);
+  if (key === P.key2 && s.ph !== 'q') return;
+  const changed = key !== P.key2; P.key2 = key;
+  if (s.ph === 'lobby') { P.answeredQ = -1; P.lastRes = null; ['pm-score','pa-score','pr-score'].forEach(id => $(id).textContent = '0'); showP('s-pmsg'); pmsg('<p class="vt">You’re in!</p><p class="vrank">See your nickname on the screen?</p><p class="vpts">' + esc(P.name) + '</p>'); }
+  else if (s.ph === 'ready') { clearInterval(P.tId); showP('s-pmsg'); pmsg('<p class="vrank">Question ' + (s.q + 1) + ' of ' + s.n + '</p><p class="vt">Get ready!</p><div class="spinner"></div>'); }
+  else if (s.ph === 'q') {
+    if (Number.isFinite(s.left) && changed) P.deadline = Date.now() + s.left;
+    if (!changed) return;
+    if (P.answeredQ === s.q) { showP('s-pmsg'); pmsg('<div class="spinner"></div><p class="vt" style="font-size:28px">Answer sent!</p><p class="vrank">Waiting for the others…</p>'); return; }
+    renderAnswer(s);
+  }
+  else if (s.ph === 'rev') { clearInterval(P.tId); renderVerdict(s); }
+  else if (s.ph === 'board') { clearInterval(P.tId); const r = s.res && s.res[P.id]; if (!r) return; showP('s-pmsg'); pmsg('<p class="vt">' + ord(r[2]) + ' place</p><p class="vrank">' + behindText(s) + '</p><p class="vpts">' + fmt(r[1]) + ' points</p>'); }
+  else if (s.ph === 'end') { clearInterval(P.tId); const r = s.res && s.res[P.id]; if (!r) return; showP('s-pmsg'); pmsg('<p class="vrank">Game over</p><p class="vt">You finished ' + ord(r[2]) + '!</p><p class="vpts">' + fmt(r[1]) + ' points</p><p class="vrank">' + r[5] + ' / ' + s.n + ' correct answers</p>' + (r[2] <= 3 ? '<p class="vt" style="font-size:56px">' + ['&#129351;','&#129352;','&#129353;'][r[2] - 1] + '</p>' : '')); }
+}
+function behindText(s){
+  const r = s.res[P.id]; if (r[2] === 1) return 'You’re in the lead!';
+  let ahead = null; Object.keys(s.res).forEach(k => { if (s.res[k][2] === r[2] - 1) ahead = s.res[k]; });
+  return ahead ? fmt(ahead[1] - r[1]) + ' points behind the next player' : 'Keep going!';
+}
+function showP(id){ show(id); }
+function renderAnswer(s){
+  showP('s-pans'); $('pa-num').textContent = 'Question ' + (s.q + 1) + ' of ' + s.n;
+  $('pa-q').textContent = s.qt || '';
+  const g = $('pa-grid'); g.innerHTML = '';
+  (s.a || []).forEach((t, i) => { const b = document.createElement('button'); b.className = 'pbtn t' + i; b.innerHTML = SHAPES[i] + '<span></span>'; b.querySelector('span').textContent = t; b.onclick = () => answer(s.q, i + 1, s.t); g.appendChild(b); });
+  const lim = (s.t || 20) * 1000; const bar = $('pa-timer');
+  clearInterval(P.tId); P.tId = setInterval(() => { const left = Math.max(0, P.deadline - Date.now()); bar.style.transform = 'scaleX(' + (left / lim) + ')'; if (left <= 0) { clearInterval(P.tId); g.querySelectorAll('button').forEach(b => b.disabled = true); } }, 100);
+}
+function answer(q, a, t){
+  if (P.answeredQ === q) return; P.answeredQ = q;
+  const lim = (t || 20) * 1000; const ms = Math.max(0, Math.min(lim, lim - (P.deadline - Date.now())));
+  P.tr.pub(P.base + '/in', { t: 'ans', id: P.id, q, a, ms: Math.round(ms) });
+  clearInterval(P.tId); showP('s-pmsg');
+  pmsg('<div class="spinner"></div><p class="vt" style="font-size:28px">Answer sent!</p><p class="vrank">Waiting for the others…</p>');
+  if (navigator.vibrate) try { navigator.vibrate(40); } catch(e){}
+}
+function renderVerdict(s){
+  const r = s.res && s.res[P.id]; if (!r) return; showP('s-pres');
+  const box = $('pr-box');
+  const ok = r[3] === 1, none = r[3] === -1;
+  box.className = 'verdict ' + (ok ? 'good' : none ? 'none' : 'bad');
+  box.innerHTML = (none ? '<p class="vt">Time’s up!</p>' : '<div class="vmark">' + (ok ? ICON_OK : ICON_BAD) + '</div><p class="vt">' + (ok ? 'Correct' : 'Incorrect') + '</p>') +
+    '<p class="vpts">' + (ok ? '+ ' + fmt(r[0]) : '+ 0') + '</p>' +
+    (ok && r[4] >= 2 ? '<p class="vrank">Answer streak: ' + r[4] + ' &#128293;</p>' : '') +
+    '<p class="vrank">You’re in ' + ord(r[2]) + ' place</p>';
+}
+
+/* ---------- wiring ---------- */
+$('go-join').onclick = () => { show('s-pin'); $('in-pin').focus(); };
+$('go-host').onclick = () => { H.offline = false; hostStart(); };
+$('go-offline').onclick = () => { H.offline = true; startGame(); };
+$('hconn-retry').onclick = () => hostStart();
+$('hconn-off').onclick = () => { H.offline = true; startGame(); };
+$('btn-start').onclick = () => startGame();
+$('btn-skip').onclick = () => endQuestion();
+$('btn-next').onclick = () => showBoard();
+$('btn-next2').onclick = () => nextQuestion();
+$('btn-again').onclick = () => { H.offline ? startGame() : (H.ph = 'lobby', H.q = -1, H.players.forEach(p => { p.score = 0; p.correct = 0; p.streak = 0; p.gain = 0; p.ok = -1; }), publish(), hostLobby()); };
+$('btn-csv').onclick = () => { const b = new Blob(['﻿' + resultsText(',')], { type: 'text/csv' }); const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'threathunt-results.csv'; document.body.appendChild(a); a.click(); a.remove(); };
+$('btn-copy').onclick = async () => { try { await navigator.clipboard.writeText(resultsText('\t')); $('btn-copy').textContent = 'Copied!'; } catch(e) { $('btn-copy').textContent = 'Copy failed'; } setTimeout(() => $('btn-copy').textContent = 'Copy results', 1800); };
+$('btn-mute').onclick = () => { muted = !muted; $('btn-mute').textContent = 'Sound: ' + (muted ? 'off' : 'on'); $('btn-mute').setAttribute('aria-pressed', String(muted)); };
+$('pub-url').addEventListener('change', drawQR);
+$('f-pin').onsubmit = e => { e.preventDefault(); playerConnect($('in-pin').value); };
+$('f-name').onsubmit = e => {
+  e.preventDefault(); const n = cleanName($('in-name').value);
+  if (!n) { $('name-err').textContent = 'Please type a nickname.'; return; }
+  P.name = n; store.set(P.key, { id: P.id, name: n }); $('name-err').textContent = '';
+  if (P.st) onState(P.st);
+};
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 'Enter' || e.key === ' ') {
+    const on = document.querySelector('.screen.on'); if (!on) return;
+    if (on.id === 's-hq' && !$('btn-next').hidden) { e.preventDefault(); showBoard(); }
+    else if (on.id === 's-board') { e.preventDefault(); nextQuestion(); }
+  }
+});
+window.addEventListener('beforeunload', e => { if (H.ph !== 'idle' && H.ph !== 'end' && !H.offline && H.players.size) { e.preventDefault(); e.returnValue = ''; } });
+
+/* ---------- start ---------- */
+const pinParam = (params.get('pin') || '').replace(/\D/g, '');
+if (pinParam) { $('in-pin').value = pinParam; playerConnect(pinParam); }
+else if (params.has('host')) { hostStart(); }
+else show('s-start');
+}
+</script>
+</body>
+</html>
