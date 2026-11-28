@@ -501,7 +501,7 @@ function endQuestion(){
 }
 function showBoard(){
   if (H.q >= TOTAL - 1) return showFinal();
-  if (H.offline) return nextQuestion();
+  return nextQuestion(); // leaderboard only at the end
   H.ph = 'board'; publish();
   const r = ranking().slice(0, 5);
   $('board').innerHTML = r.map((p, i) => '<div class="row" style="animation-delay:' + (i * 90) + 'ms"><span class="rk">' + (i + 1) + '</span><span class="nm">' + esc(p.name) + '</span><span class="sc">' + fmt(p.score) + '</span></div>').join('') || '<p class="wait">No players</p>';
@@ -611,7 +611,7 @@ function renderVerdict(s){
   box.innerHTML = (none ? '<p class="vt">Time’s up!</p>' : '<div class="vmark">' + (ok ? ICON_OK : ICON_BAD) + '</div><p class="vt">' + (ok ? 'Correct' : 'Incorrect') + '</p>') +
     '<p class="vpts">' + (ok ? '+ ' + fmt(r[0]) : '+ 0') + '</p>' +
     (ok && r[4] >= 2 ? '<p class="vrank">Answer streak: ' + r[4] + ' &#128293;</p>' : '') +
-    '<p class="vrank">You’re in ' + ord(r[2]) + ' place</p>';
+    '<p class="vrank">Wait for the next question…</p>';
 }
 
 /* ---------- wiring ---------- */
